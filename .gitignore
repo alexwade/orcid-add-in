@@ -1,0 +1,9 @@
+# Real OAuth credentials. Copy Credentials.example.gs to Credentials.gs and fill
+# it in locally — never commit the filled copy to a public repository.
+Credentials.gs
+
+# clasp binds each developer to their own script/Doc.
+.clasp.json
+
+.DS_Store
+node_modules/
