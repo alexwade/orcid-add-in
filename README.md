@@ -1,7 +1,7 @@
 # ORCID Author Add-on
 
-A Google Docs™ add-on that lets co-authors add themselves to a shared manuscript by
-signing in with ORCID. On successful authentication it pulls the author's public
+A Google Docs™ add-on that lets co-authors add themselves to a shared paper by
+signing in with ORCID OAuth. On successful authentication it pulls the author's public
 name, current affiliations and ROR identifiers, and inserts a formatted entry under
 an **Authors** heading.
 
@@ -9,7 +9,7 @@ Each co-author repeats this independently, so the author list assembles itself w
 correctly spelled names and real identifiers instead of the usual hand-typed drift.
 
 ```
-The Stacks → Add Author via ORCID
+Add Author via ORCID
   → Sign in with ORCID  →  preview name + affiliations  →  Insert into Document
 ```
 
@@ -20,16 +20,12 @@ Inserted entry:
 
 ## What it does
 
-- **ORCID OAuth sign-in** using the `/authenticate` scope — the narrowest one
-  available. It returns the person's ORCID iD and nothing private.
+- **ORCID OAuth sign-in** using the `/authenticate` scope. It returns the person's ORCID iD and nothing private.
 - **Public profile lookup** against the ORCID Public API v3.0 (`/person`,
   `/employments`), preferring current positions and de-duplicating by organisation.
-- **ROR identifiers** for affiliations, when ORCID has disambiguated the
-  organisation against ROR.
-- **Idempotent insertion** — an author whose ORCID iD already appears in the
-  document is skipped rather than duplicated.
-- **Finds or creates the section** — inserts after an existing `Authors` or
-  `Author contributions` paragraph, otherwise appends a new `Authors` heading.
+- **ROR identifiers** for affiliations, when available in ORCID
+- **Idempotent insertion** — an author whose ORCID iD already appears in the document is skipped rather than duplicated.
+- **Finds or creates the section** — inserts after an existing `Authors` or Author contributions` paragraph, otherwise appends a new `Authors` heading.
 
 ## Architecture in one paragraph
 
@@ -44,8 +40,7 @@ script cache under that UUID, and the dialog polls until it appears. Full detail
 ## Setup
 
 Requires an ORCID developer app and a deployed Apps Script web app, and the two
-reference each other — see **[docs/CONFIGURATION.md](docs/CONFIGURATION.md)** for
-the ordering that avoids the chicken-and-egg.
+reference each other — see **[docs/CONFIGURATION.md](docs/CONFIGURATION.md)** 
 
 Short version:
 
@@ -58,8 +53,7 @@ clasp push
 ```
 
 Then fill in `Credentials.gs` **in the Apps Script editor** — it is excluded from
-`clasp push` precisely so a push never clobbers your secrets, which also means a
-push never uploads them.
+`clasp push` 
 
 ## Files
 
@@ -80,14 +74,9 @@ second binds one developer to one script and Doc.
 
 Only **public** ORCID data is read. The `/authenticate` scope grants an ORCID iD,
 not access to limited-visibility or private records, and the access token is used
-for the profile fetch and then discarded — it is never persisted. Cached values
-(the OAuth `state` and the pending profile) expire after 10 minutes.
+for the profile fetch and then discarded. Cached values (the OAuth `state` and the pending profile) expire after 10 minutes.
 
 ## License
 
 See [LICENSE](LICENSE).
 
----
-
-Google Docs™ is a trademark of Google LLC. ORCID® is a trademark of ORCID, Inc.
-ROR is a service of the Research Organization Registry.
